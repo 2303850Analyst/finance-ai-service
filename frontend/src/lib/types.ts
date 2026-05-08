@@ -46,6 +46,7 @@ export interface Operation {
   quantity: string | null
   price: string | null
   amount: string
+  fee: string | null
   currency: string
   operated_at: string
   note: string | null

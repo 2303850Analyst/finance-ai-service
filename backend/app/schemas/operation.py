@@ -14,6 +14,7 @@ class OperationCreate(BaseModel):
     quantity: Decimal | None = None
     price: Decimal | None = None
     amount: Decimal
+    fee: Decimal | None = None
     currency: str = "RUB"
     operated_at: datetime
     note: str | None = None
@@ -37,6 +38,7 @@ class OperationOut(BaseModel):
     quantity: Decimal | None
     price: Decimal | None
     amount: Decimal
+    fee: Decimal | None
     currency: str
     operated_at: datetime
     note: str | None

@@ -134,6 +134,7 @@ export default function DashboardPage() {
         ...(op.quantity ? { quantity: op.quantity } : {}),
         ...(op.price ? { price: op.price } : {}),
         amount,
+        ...(op.fee ? { fee: op.fee } : {}),
         currency: op.currency,
         operated_at: op.operated_at,
       })
@@ -386,6 +387,7 @@ export default function DashboardPage() {
                   <th className="text-left pb-2">Asset</th>
                   <th className="text-right pb-2">Qty</th>
                   <th className="text-right pb-2">Price</th>
+                  <th className="text-right pb-2">Fee</th>
                   <th className="text-right pb-2">Amount</th>
                 </tr>
               </thead>
@@ -402,6 +404,9 @@ export default function DashboardPage() {
                     </td>
                     <td className="py-2 text-right tabular-nums text-gray-300">
                       {op.price ? fmt(op.price) : '—'}
+                    </td>
+                    <td className="py-2 text-right tabular-nums text-gray-500">
+                      {op.fee ? fmt(op.fee) : '—'}
                     </td>
                     <td className="py-2 text-right tabular-nums font-medium">{fmt(op.amount)}</td>
                   </tr>

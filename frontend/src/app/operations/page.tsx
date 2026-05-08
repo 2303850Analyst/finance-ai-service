@@ -450,6 +450,7 @@ export default function OperationsPage() {
                   <th className="text-left px-3 py-2">Asset</th>
                   <th className="text-right px-3 py-2">Qty</th>
                   <th className="text-right px-3 py-2">Price</th>
+                  <th className="text-right px-3 py-2">Fee</th>
                   <th className="text-right px-3 py-2">Amount</th>
                   <th className="text-right px-5 py-2"></th>
                 </tr>
@@ -463,6 +464,7 @@ export default function OperationsPage() {
                     <td className="px-3 py-2.5 font-mono text-blue-400 text-xs">{op.asset_id ? (assetMap[op.asset_id] ?? '—') : '—'}</td>
                     <td className="px-3 py-2.5 text-right tabular-nums text-gray-300">{fmtQty(op.quantity)}</td>
                     <td className="px-3 py-2.5 text-right tabular-nums text-gray-300">{op.price ? fmt(op.price) : '—'}</td>
+                    <td className="px-3 py-2.5 text-right tabular-nums text-gray-500">{op.fee ? fmt(op.fee) : '—'}</td>
                     <td className="px-3 py-2.5 text-right tabular-nums font-medium">{fmt(op.amount)}</td>
                     <td className="px-5 py-2.5 text-right">
                       <button

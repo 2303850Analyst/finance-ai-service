@@ -59,6 +59,7 @@ class Operation(Base, TimestampMixin):
     quantity: Mapped[Decimal | None] = mapped_column(Numeric(20, 8), nullable=True)
     price: Mapped[Decimal | None] = mapped_column(Numeric(20, 8), nullable=True)
     amount: Mapped[Decimal] = mapped_column(Numeric(20, 8), nullable=False)
+    fee: Mapped[Decimal | None] = mapped_column(Numeric(20, 8), nullable=True)
     currency: Mapped[str] = mapped_column(String(10), nullable=False)
 
     operated_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False)

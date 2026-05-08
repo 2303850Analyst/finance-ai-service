@@ -77,6 +77,7 @@ async def create_operation(
         quantity=payload.quantity,
         price=payload.price,
         amount=payload.amount,
+        fee=payload.fee,
         currency=payload.currency,
         operated_at=payload.operated_at,
         note=payload.note,
