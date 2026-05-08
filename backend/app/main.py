@@ -3,6 +3,7 @@ from fastapi.middleware.cors import CORSMiddleware
 
 from app.api.health import router as health_router
 from app.api.routes.accounts import router as accounts_router
+from app.api.routes.ai import router as ai_router
 from app.api.routes.assets import router as assets_router
 from app.api.routes.operations import router as operations_router
 from app.api.routes.portfolio import router as portfolio_router
@@ -23,6 +24,7 @@ V1 = "/api/v1"
 
 app.include_router(health_router, prefix=V1)
 app.include_router(accounts_router, prefix=V1)
+app.include_router(ai_router, prefix=V1)
 app.include_router(assets_router, prefix=V1)
 app.include_router(operations_router, prefix=V1)
 app.include_router(portfolio_router, prefix=V1)

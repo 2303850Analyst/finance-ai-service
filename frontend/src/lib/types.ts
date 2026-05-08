@@ -88,6 +88,30 @@ export interface SeedResult {
   assets_created: string[]
 }
 
+export interface OperationDraft {
+  operation_type: string
+  account_name: string | null
+  asset_ticker: string | null
+  asset_name: string | null
+  quantity: string | null
+  price: string | null
+  amount: string | null
+  fee: string | null
+  currency: string
+  operated_at: string
+}
+
+export interface ParseResponse {
+  status: 'parsed' | 'need_clarification' | 'not_operation'
+  raw_text: string
+  operation: OperationDraft | null
+  account_id: string | null
+  asset_id: string | null
+  warnings: string[]
+  missing_fields: string[]
+  message: string | null
+}
+
 export const ACCOUNT_TYPES: AccountType[] = ['broker', 'bank', 'crypto', 'cash', 'deposit', 'other']
 export const ASSET_TYPES: AssetType[] = [
   'stock', 'bond', 'etf', 'currency', 'cash', 'deposit', 'crypto', 'real_estate', 'other',

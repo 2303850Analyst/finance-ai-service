@@ -2,6 +2,7 @@ import type {
   Account,
   Asset,
   Operation,
+  ParseResponse,
   Position,
   AllocationItem,
   PortfolioSummary,
@@ -54,5 +55,13 @@ export const api = {
     summary: () => request<PortfolioSummary>('/api/v1/portfolio/summary'),
     positions: () => request<Position[]>('/api/v1/portfolio/positions'),
     allocation: () => request<AllocationItem[]>('/api/v1/portfolio/allocation'),
+  },
+
+  ai: {
+    parse: (text: string) =>
+      request<ParseResponse>('/api/v1/ai/parse-operation', {
+        method: 'POST',
+        body: JSON.stringify({ text }),
+      }),
   },
 }
