@@ -12,6 +12,12 @@ class AccountCreate(BaseModel):
     currency: str = "RUB"
 
 
+class AccountUpdate(BaseModel):
+    """Partial update. Only name is safe to edit without breaking operation history.
+    TODO: Allow account_type and currency edits with history-compatibility validation."""
+    name: str | None = None
+
+
 class AccountOut(BaseModel):
     id: uuid.UUID
     name: str

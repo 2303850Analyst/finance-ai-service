@@ -10,7 +10,7 @@ from app.models.asset import Asset
 from app.models.operation import Operation, OperationStatus, OperationType
 from app.models.position import Position
 from app.models.user import User
-from app.schemas.operation import OperationCreate
+from app.schemas.operation import OperationCreate, OperationUpdate
 from app.services.portfolio_engine import recalculate_positions
 
 
@@ -33,6 +33,45 @@ def _validate(payload: OperationCreate) -> None:
 
     if op == OperationType.fee and payload.amount < 0:
         raise HTTPException(400, "fee amount cannot be negative")
+
+    if op == OperationType.expense:
+        if payload.amount <= 0:
+            raise HTTPException(400, "expense amount must be positive")
+        if not payload.is_refund and not payload.expense_group:
+            raise HTTPException(400, "expense_group is required for expense operations")
+
+
+async def _build_and_insert_operation(
+    payload: OperationCreate, user_id: uuid.UUID, db: AsyncSession
+) -> Operation:
+    """Insert one operation row and flush (no commit). Caller owns the transaction."""
+    op = Operation(
+        user_id=user_id,
+        account_id=payload.account_id,
+        asset_id=payload.asset_id,
+        operation_type=payload.operation_type,
+        status=OperationStatus.confirmed,
+        quantity=payload.quantity,
+        price=payload.price,
+        amount=payload.amount,
+        fee=payload.fee,
+        currency=payload.currency,
+        operated_at=payload.operated_at,
+        note=payload.note,
+        income_source=payload.income_source,
+        expense_group=getattr(payload, "expense_group", None),
+        expense_category=getattr(payload, "expense_category", None),
+        merchant=getattr(payload, "merchant", None),
+        is_refund=getattr(payload, "is_refund", False) or False,
+        principal_amount=getattr(payload, "principal_amount", None),
+        interest_amount=getattr(payload, "interest_amount", None),
+        liability_name=getattr(payload, "liability_name", None),
+        linked_asset_id=getattr(payload, "linked_asset_id", None),
+        to_account_id=getattr(payload, "to_account_id", None),
+    )
+    db.add(op)
+    await db.flush()
+    return op
 
 
 async def create_operation(
@@ -68,24 +107,52 @@ async def create_operation(
                 f"Insufficient quantity: available {available}, requested {requested}",
             )
 
-    op = Operation(
-        user_id=user.id,
-        account_id=payload.account_id,
-        asset_id=payload.asset_id,
-        operation_type=payload.operation_type,
-        status=OperationStatus.confirmed,
-        quantity=payload.quantity,
-        price=payload.price,
-        amount=payload.amount,
-        fee=payload.fee,
-        currency=payload.currency,
-        operated_at=payload.operated_at,
-        note=payload.note,
-    )
-    db.add(op)
-    await db.flush()  # assign id, stay in transaction
-
+    op = await _build_and_insert_operation(payload, user.id, db)
     await recalculate_positions(payload.account_id, db)
+    await db.commit()
+    await db.refresh(op)
+    return op
+
+
+async def update_operation(
+    operation_id: uuid.UUID, payload: OperationUpdate, user: User, db: AsyncSession
+) -> Operation:
+    """Update a non-transfer, non-buy/sell operation.
+
+    Only fields present in the request body (model_fields_set) are applied.
+    Pass a field with null value to clear it.
+    """
+    op = await db.get(Operation, operation_id)
+    if op is None or op.user_id != user.id:
+        raise HTTPException(404, "Operation not found")
+
+    if op.operation_type in (OperationType.buy, OperationType.sell):
+        raise HTTPException(
+            400,
+            "Редактирование покупок и продаж временно недоступно. "
+            "Удалите операцию и создайте заново.",
+        )
+    if op.operation_type == OperationType.transfer:
+        raise HTTPException(
+            400,
+            "Для редактирования перевода используйте PATCH /api/v1/operations/transfer/{id}",
+        )
+
+    # Validate linked_asset_id if being changed
+    if "linked_asset_id" in payload.model_fields_set and payload.linked_asset_id is not None:
+        asset = await db.get(Asset, payload.linked_asset_id)
+        if asset is None:
+            raise HTTPException(404, "Linked asset not found")
+
+    # Apply only the fields that were explicitly included in the request
+    for field_name in payload.model_fields_set:
+        if hasattr(op, field_name):
+            setattr(op, field_name, getattr(payload, field_name))
+
+    # Recalculate positions if the operation affects portfolio state
+    if op.operation_type == OperationType.manual_valuation:
+        await recalculate_positions(op.account_id, db)
+
     await db.commit()
     await db.refresh(op)
     return op

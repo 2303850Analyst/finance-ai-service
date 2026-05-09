@@ -39,6 +39,10 @@ services:
       - "3000:3000"
     depends_on:
       - backend
+    volumes:
+      - ./frontend:/app          # live source mount — changes propagate without rebuild
+      - /app/.next               # isolate .next inside container (never from host)
+      - /app/node_modules        # isolate node_modules inside container
 
 volumes:
   postgres_data:

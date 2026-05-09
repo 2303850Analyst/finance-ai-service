@@ -76,6 +76,26 @@ npm install
 npm run dev
 ```
 
+## Frontend Pages
+
+| Route | Description |
+|---|---|
+| `/` | Dashboard — total capital, cash, investment portfolio, monthly cashflow, positions |
+| `/operations` | Operations log — create, view, delete operations (including expenses) |
+| `/accounts` | Accounts — create/delete broker, bank, crypto, cash, savings accounts; configure interest for savings |
+| `/assets` | Assets registry + Deposits section; create deposits via "Создать вклад" |
+
+### Dashboard KPIs
+
+| Card | Meaning |
+|---|---|
+| Общий капитал | `cash_balances + investment_positions` (at cost). Liabilities not yet modelled. |
+| Деньги | Sum of all account cash balances |
+| Инвестпортфель | Investment positions value at acquisition cost |
+| Денежный поток месяца | Monthly income, expenses, free cashflow — NOT the same as capital |
+
+Navigation is always visible in the left sidebar. AI assistant bar is a placeholder — real AI integration is a future stage.
+
 ## API Endpoints
 
 | Method | Path            | Description        |

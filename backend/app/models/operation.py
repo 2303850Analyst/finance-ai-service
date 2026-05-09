@@ -4,7 +4,7 @@ from datetime import datetime
 from decimal import Decimal
 from typing import TYPE_CHECKING
 
-from sqlalchemy import DateTime, Enum as SAEnum, ForeignKey, Numeric, String, Text
+from sqlalchemy import Boolean, DateTime, Enum as SAEnum, ForeignKey, Numeric, String, Text
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
@@ -26,6 +26,8 @@ class OperationType(str, enum.Enum):
     fee = "fee"
     tax = "tax"
     manual_valuation = "manual_valuation"
+    expense = "expense"
+    transfer = "transfer"
 
 
 class OperationStatus(str, enum.Enum):
@@ -64,6 +66,31 @@ class Operation(Base, TimestampMixin):
 
     operated_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False)
     note: Mapped[str | None] = mapped_column(Text, nullable=True)
+    income_source: Mapped[str | None] = mapped_column(String(50), nullable=True)
+
+    # Expense-specific columns
+    expense_group: Mapped[str | None] = mapped_column(String(20), nullable=True)
+    expense_category: Mapped[str | None] = mapped_column(String(50), nullable=True)
+    merchant: Mapped[str | None] = mapped_column(String(255), nullable=True)
+    is_refund: Mapped[bool | None] = mapped_column(Boolean, default=False, nullable=True)
+    principal_amount: Mapped[Decimal | None] = mapped_column(Numeric(20, 8), nullable=True)
+    interest_amount: Mapped[Decimal | None] = mapped_column(Numeric(20, 8), nullable=True)
+    liability_name: Mapped[str | None] = mapped_column(String(255), nullable=True)
+
+    # Transfer-specific column (no FK constraint — stores the target account UUID)
+    to_account_id: Mapped[uuid.UUID | None] = mapped_column(
+        UUID(as_uuid=True), nullable=True
+    )
+
+    # Credit payment link: optional reference to the asset being financed
+    linked_asset_id: Mapped[uuid.UUID | None] = mapped_column(
+        UUID(as_uuid=True), ForeignKey("assets.id", ondelete="SET NULL"), nullable=True
+    )
 
     account: Mapped["Account"] = relationship("Account", back_populates="operations")
-    asset: Mapped["Asset | None"] = relationship("Asset", back_populates="operations")
+    asset: Mapped["Asset | None"] = relationship(
+        "Asset", foreign_keys="[Operation.asset_id]", back_populates="operations"
+    )
+    linked_asset: Mapped["Asset | None"] = relationship(
+        "Asset", foreign_keys="[Operation.linked_asset_id]"
+    )

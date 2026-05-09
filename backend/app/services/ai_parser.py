@@ -6,6 +6,9 @@ to DB IDs using the current user's data.  Returns a ParseResponse that the
 frontend can display as a preview before the user confirms.
 
 The parser NEVER writes to the database.  It only returns a draft.
+
+AI Scope Guard runs before the provider: blocked requests receive a safe
+response immediately without reaching the AI layer.
 """
 import uuid
 from datetime import datetime, timezone
@@ -19,6 +22,7 @@ from app.models.user import User
 from app.schemas.ai_command import OperationDraft, ParseResponse
 from app.services.ai_providers.base import AIProvider
 from app.services.ai_providers.mock_provider import MockProvider
+from app.services.ai_scope_guard import ScopeCategory, classify
 
 _provider: AIProvider = MockProvider()
 
@@ -32,6 +36,15 @@ async def parse_operation_text(
     user: User,
     db: AsyncSession,
 ) -> ParseResponse:
+    # ── Scope guard: block before reaching AI provider ────────────────────────
+    scope = classify(text)
+    if scope.category == ScopeCategory.BLOCKED:
+        return ParseResponse(
+            status="not_operation",
+            raw_text=text,
+            message=scope.safe_response,
+        )
+
     proposal = _provider.parse_operation(text)
 
     # ── not an operation ──────────────────────────────────────────────────────
