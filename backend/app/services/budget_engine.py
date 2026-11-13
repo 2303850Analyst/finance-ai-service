@@ -168,7 +168,7 @@ def compute_expenses_by_category(
         group = getattr(op, "expense_group", None) or ""
         category = getattr(op, "expense_category", None) or ""
         key = (group, category)
-        totals[key][0] += op.amount + (op.fee or Decimal("0"))
+        totals[key][0] += op.amount + (Decimal("0") if group == "credit" else (op.fee or Decimal("0")))
         totals[key][1] += 1
 
     lines = [

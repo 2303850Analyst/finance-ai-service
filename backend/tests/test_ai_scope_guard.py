@@ -74,6 +74,14 @@ class TestFinanceOperationsAllowed:
 
 
 class TestNavigationAllowed:
+    @pytest.mark.parametrize('question', [
+        'На что ушли деньги в этом месяце?',
+        'Куда ушли деньги?',
+        'Покажи отчёт за месяц',
+    ])
+    def test_genbi_natural_finance_questions(self, question):
+        _allowed(question)
+
     def test_how_to_add_operation(self):
         _allowed("Как добавить операцию?")
 

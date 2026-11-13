@@ -1,5 +1,9 @@
 # Finance AI Service
 
+> Current local MVP (2026-11-13): Telegram text/voice input, Mini App and GenBI are implemented.
+> See [MVP guide](README-MVP.md) for startup, configuration, supported reports and verified checks.
+> Migrations now run automatically at backend startup. Ports are bound to loopback.
+
 Browser-based AI service for personal finance and investment portfolio tracking.
 
 ## Stack
@@ -94,7 +98,7 @@ npm run dev
 | Инвестпортфель | Investment positions value at acquisition cost |
 | Денежный поток месяца | Monthly income, expenses, free cashflow — NOT the same as capital |
 
-Navigation is always visible in the left sidebar. AI assistant bar is a placeholder — real AI integration is a future stage.
+Navigation includes Analytics and Telegram. AI operation input is on the dashboard; the top bar links to input, analytics and Telegram.
 
 ## API Endpoints
 

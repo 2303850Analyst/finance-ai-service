@@ -75,7 +75,7 @@ async def _build_and_insert_operation(
 
 
 async def create_operation(
-    payload: OperationCreate, user: User, db: AsyncSession
+    payload: OperationCreate, user: User, db: AsyncSession, *, commit: bool = True
 ) -> Operation:
     # Account ownership
     account = await db.get(Account, payload.account_id)
@@ -109,8 +109,9 @@ async def create_operation(
 
     op = await _build_and_insert_operation(payload, user.id, db)
     await recalculate_positions(payload.account_id, db)
-    await db.commit()
-    await db.refresh(op)
+    if commit:
+        await db.commit()
+        await db.refresh(op)
     return op
 
 

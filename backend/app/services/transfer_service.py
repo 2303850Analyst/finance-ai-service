@@ -12,7 +12,7 @@ from app.services.cash_engine import calculate_all_cash_balances
 
 
 async def create_transfer(
-    payload: TransferCreate, user: User, db: AsyncSession
+    payload: TransferCreate, user: User, db: AsyncSession, *, commit: bool = True
 ) -> Operation:
     """Create a transfer operation between two accounts owned by the same user."""
     # Validate from != to
@@ -60,8 +60,9 @@ async def create_transfer(
     )
     db.add(op)
     await db.flush()
-    await db.commit()
-    await db.refresh(op)
+    if commit:
+        await db.commit()
+        await db.refresh(op)
     return op
 
 

@@ -15,6 +15,8 @@ const mainLinks: NavItem[] = [
   { href: '/operations', label: 'Operations' },
   { href: '/accounts', label: 'Accounts' },
   { href: '/assets', label: 'Assets' },
+  { href: '/analytics', label: 'Аналитика' },
+  { href: '/telegram', label: 'Telegram' },
 ]
 
 const comingSoonLinks: NavItem[] = [

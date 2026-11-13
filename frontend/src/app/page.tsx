@@ -176,6 +176,7 @@ export default function DashboardPage() {
       const operationPayload: Record<string, unknown> = {
         account_id: aiResult.account_id,
         ...(aiResult.asset_id ? { asset_id: aiResult.asset_id } : {}),
+        ...(aiResult.to_account_id ? { to_account_id: aiResult.to_account_id } : {}),
         operation_type: op.operation_type,
         ...(op.quantity ? { quantity: op.quantity } : {}),
         ...(op.price ? { price: op.price } : {}),
@@ -183,6 +184,13 @@ export default function DashboardPage() {
         ...(op.fee ? { fee: op.fee } : {}),
         currency: op.currency,
         operated_at: op.operated_at,
+        ...(op.expense_group ? { expense_group: op.expense_group } : {}),
+        ...(op.expense_category ? { expense_category: op.expense_category } : {}),
+        ...(op.merchant ? { merchant: op.merchant } : {}),
+        ...(op.income_source ? { income_source: op.income_source } : {}),
+        ...(op.principal_amount ? { principal_amount: op.principal_amount } : {}),
+        ...(op.interest_amount ? { interest_amount: op.interest_amount } : {}),
+        ...(op.note ? { note: op.note } : {}),
       }
 
       const result = await api.operations.confirmWithFunding({
@@ -294,7 +302,7 @@ export default function DashboardPage() {
       {/* AI Command Bar */}
       <Card>
         <h2 className="text-sm font-semibold text-gray-400 uppercase tracking-wider mb-3">
-          AI Command Bar
+          AI-ввод операции
         </h2>
         <div className="space-y-3">
           <div className="flex gap-2">
@@ -314,6 +322,9 @@ export default function DashboardPage() {
               {aiParsing ? 'Разбираю…' : 'Разобрать'}
             </button>
           </div>
+          <p className="text-xs text-gray-600">
+            AI заполнит черновик. Сохранение только после подтверждения.
+          </p>
 
           {aiError && (
             <div className="rounded-lg border border-red-800/50 bg-red-900/20 p-3 text-red-400 text-sm">
@@ -321,11 +332,31 @@ export default function DashboardPage() {
             </div>
           )}
 
+          {/* Provider-level error (key missing, API down, etc.) */}
+          {aiResult?.provider_error && (
+            <div className="rounded-lg border border-red-800/50 bg-red-900/20 p-3 text-red-400 text-sm">
+              ⚠ {aiResult.provider_error}
+            </div>
+          )}
+
+          {/* Rate limit message */}
+          {aiResult?.rate_limited && (
+            <div className="rounded-lg border border-orange-800/50 bg-orange-900/20 p-3 space-y-1">
+              <p className="text-orange-400 text-sm font-medium">Лимит запросов</p>
+              <p className="text-orange-300 text-xs">{aiResult.message}</p>
+              {aiResult.cooldown_seconds_remaining && (
+                <p className="text-orange-400 text-xs">
+                  Подождите {aiResult.cooldown_seconds_remaining} сек.
+                </p>
+              )}
+            </div>
+          )}
+
           {aiConfirmMsg && !aiResult && (
             <p className="text-sm text-green-400">{aiConfirmMsg}</p>
           )}
 
-          {aiResult?.status === 'not_operation' && (
+          {aiResult?.status === 'not_operation' && !aiResult.provider_error && !aiResult.rate_limited && (
             <div className="rounded-lg border border-yellow-800/50 bg-yellow-900/20 p-3 text-yellow-400 text-sm">
               {aiResult.message || 'Не распознано как финансовая операция.'}
             </div>
@@ -785,16 +816,25 @@ function PreviewField({ label, value }: { label: string; value: string }) {
 function AiDraftPreview({ op }: { op: OperationDraft }) {
   return (
     <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 pt-1">
-      <PreviewField label="Тип" value={op.operation_type.replace('_', ' ')} />
+      <PreviewField label="Тип" value={op.operation_type.replace(/_/g, ' ')} />
       {op.asset_ticker && (
         <PreviewField label="Актив" value={op.asset_name ? `${op.asset_ticker} · ${op.asset_name}` : op.asset_ticker} />
       )}
       {op.account_name && <PreviewField label="Счёт" value={op.account_name} />}
+      {op.to_account_name && <PreviewField label="Счёт назначения" value={op.to_account_name} />}
       {op.quantity && <PreviewField label="Кол-во" value={op.quantity} />}
       {op.price && <PreviewField label="Цена" value={op.price} />}
       {op.amount && <PreviewField label="Сумма" value={op.amount} />}
       {op.fee && <PreviewField label="Комиссия" value={op.fee} />}
       <PreviewField label="Валюта" value={op.currency} />
+      {op.expense_group && <PreviewField label="Группа расхода" value={op.expense_group} />}
+      {op.expense_category && <PreviewField label="Категория" value={op.expense_category} />}
+      {op.merchant && <PreviewField label="Получатель" value={op.merchant} />}
+      {op.income_source && <PreviewField label="Источник дохода" value={op.income_source} />}
+      {op.principal_amount && <PreviewField label="Тело долга" value={op.principal_amount} />}
+      {op.interest_amount && <PreviewField label="Проценты" value={op.interest_amount} />}
+      {op.linked_asset_text && <PreviewField label="Кредит/актив" value={op.linked_asset_text} />}
+      {op.note && <PreviewField label="Заметка" value={op.note} />}
     </div>
   )
 }

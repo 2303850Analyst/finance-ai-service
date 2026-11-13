@@ -52,18 +52,24 @@ def _re(pattern: str) -> re.Pattern:
 
 
 # Prompt injection / jailbreak
+# Patterns use .{0,50}? so extra words between trigger and target don't bypass detection.
 _INJECTION: list[re.Pattern] = [
-    _re(r"ignore\s+(previous|all|your|any)\s+(instructions?|rules?|prompt|constraints?)"),
-    _re(r"forget\s+(your|all|previous|any)\s+(rules?|instructions?|constraints?)"),
+    # "ignore [all/previous/your/any] [previous] instructions" — handles multi-word variants
+    _re(r"ignore\s+(?:\w+\s+){0,3}(?:instructions?|rules?|prompt|constraints?)"),
+    _re(r"forget\s+(?:\w+\s+){0,3}(?:rules?|instructions?|constraints?)"),
     _re(r"\b(jailbreak|dan\s+mode|developer\s+mode|god\s+mode)\b"),
     _re(r"(act|behave)\s+as\s+(if|though)\s+(you\s+)?(have|had|are|were)\s+(no\b|without)"),
     _re(r"pretend\s+(you\s+)?(have|had|are|were)\s+(no\b|without)"),
     _re(r"bypass\s+(your\s+)?(safety|filter|restriction|rule|guardrail|scope)"),
     _re(r"(disable|remove|override|turn\s+off)\s+(your\s+)?(restriction|filter|rule|safety|guard|scope)"),
+    # Generic: "new instructions", "your real instructions", etc.
+    _re(r"\b(new|real|true|actual|original|secret)\s+(instructions?|rules?|prompt|persona)\b"),
+    _re(r"\byou\s+(are\s+now|will\s+now|must\s+now|should\s+now)\s+(act|behave|respond|answer|play)\b"),
     # Russian
-    _re(r"игнорируй\s+(предыдущие|все|твои|свои)\s+(инструкции|правила|ограничения)"),
-    _re(r"забудь\s+(свои|все|предыдущие)\s+(правила|инструкции|ограничения)"),
+    _re(r"игнорируй\s+(?:\w+\s+){0,3}(?:инструкции|правила|ограничения)"),
+    _re(r"забудь\s+(?:\w+\s+){0,3}(?:правила|инструкции|ограничения)"),
     _re(r"(обойди|отключи|сними)\s+(ограничения|правила|фильтр|рамки)"),
+    _re(r"притворись\s+.{0,40}?(без\s+ограничений|свободн)"),
 ]
 
 # System prompt disclosure
@@ -136,12 +142,12 @@ _FINANCE_SIGNAL = re.compile(
     r"|дивиденд|купон|комисси|вознаграждени"
     r"|переоцени|переоценить|переоценк"
     r"|портфел|позици|баланс|прибыл|убыток|доходност|остаток"
-    r"|доход|расход|зарплат"
+    r"|доход|расход|зарплат|денежн|деньг|потрат|трат|кредит|ипотек"
     r"|счет|счёт|вклад|накопительн|брокер"
     r"|актив|акци|облигаци|фонд|тикер"
     r"|процент|ставк|начислени"
     r"|налог|ндфл|руб"
-    r"|операци|отчет"
+    r"|операци|отч[её]т"
     r"|добавить|создать|удалить|показать|найти|открыть|настройк"
     r")"
     r")",

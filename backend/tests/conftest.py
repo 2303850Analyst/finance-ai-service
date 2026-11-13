@@ -104,3 +104,25 @@ async def client(db: AsyncSession) -> AsyncClient:
     async with AsyncClient(transport=ASGITransport(app=app), base_url="http://test") as c:
         yield c
     app.dependency_overrides.clear()
+
+
+@pytest.fixture(autouse=True)
+def _force_mock_ai_provider():
+    """
+    Force the AI parser to use MockProvider in every test, regardless of the
+    AI_PROVIDER setting in .env.  Individual tests may swap _provider to a
+    stub inside a try/finally block — this fixture restores mock afterward.
+    """
+    from app.services import ai_parser as parser_module
+    from app.services.ai_providers.mock_provider import MockProvider
+
+    original_provider = parser_module._provider
+    original_name = parser_module._provider_name
+
+    parser_module._provider = MockProvider()
+    parser_module._provider_name = "mock"
+
+    yield
+
+    parser_module._provider = original_provider
+    parser_module._provider_name = original_name

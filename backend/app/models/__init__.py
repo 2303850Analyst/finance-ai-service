@@ -1,4 +1,5 @@
 from app.models.account import Account
+from app.models.ai_usage_event import AIUsageEvent
 from app.models.asset import Asset
 from app.models.audit_log import AuditLog
 from app.models.interest_settings import AccountInterestSettings
@@ -16,4 +17,7 @@ __all__ = [
     "AuditLog",
     "AccountInterestSettings",
     "RecurringIncome",
+    "AIUsageEvent",
 ]
+
+from app.models.telegram import TelegramLink, TelegramPairing, OperationDraftRecord

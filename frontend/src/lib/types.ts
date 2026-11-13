@@ -155,6 +155,7 @@ export interface ConfirmWithFundingResponse {
 export interface OperationDraft {
   operation_type: string
   account_name: string | null
+  to_account_name: string | null
   asset_ticker: string | null
   asset_name: string | null
   quantity: string | null
@@ -163,6 +164,18 @@ export interface OperationDraft {
   fee: string | null
   currency: string
   operated_at: string
+  // Expense-specific
+  expense_group: string | null
+  expense_category: string | null
+  merchant: string | null
+  // Income-specific
+  income_source: string | null
+  // Credit payment breakdown
+  principal_amount: string | null
+  interest_amount: string | null
+  linked_asset_text: string | null
+  // Misc
+  note: string | null
 }
 
 export interface ParseResponse {
@@ -171,9 +184,15 @@ export interface ParseResponse {
   operation: OperationDraft | null
   account_id: string | null
   asset_id: string | null
+  to_account_id: string | null
   warnings: string[]
   missing_fields: string[]
   message: string | null
+  // Provider-level errors
+  provider_error: string | null
+  // Rate limiting
+  rate_limited: boolean
+  cooldown_seconds_remaining: number | null
 }
 
 export interface AccountInterestSettings {

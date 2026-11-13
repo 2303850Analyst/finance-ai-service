@@ -1,0 +1,2 @@
+PASS: real MP4 audio -> transcription -> draft -> edit -> one confirmed operation
+PASS: real GenBI + follow-up retains report/account and changes period

@@ -64,6 +64,11 @@ async def calculate_all_cash_balances(
     )
     operations = ops_result.scalars().all()
 
+    return calculate_cash_balances_from_operations(operations)
+
+
+def calculate_cash_balances_from_operations(operations) -> dict[CashKey, Decimal]:
+    """Replay confirmed operations supplied by a caller, including both transfer legs."""
     balances: dict[CashKey, Decimal] = defaultdict(Decimal)
     for op in operations:
         key: CashKey = (str(op.account_id), op.currency)

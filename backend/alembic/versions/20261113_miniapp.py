@@ -1,0 +1,15 @@
+"""Version drafts shared between Telegram and Mini App."""
+from alembic import op
+import sqlalchemy as sa
+revision = "20261113_miniapp"
+down_revision = "20261113_telegram"
+branch_labels = None
+depends_on = None
+
+
+def upgrade():
+    op.add_column("operation_drafts", sa.Column("revision", sa.Integer(), nullable=False, server_default="1"))
+
+
+def downgrade():
+    op.drop_column("operation_drafts", "revision")

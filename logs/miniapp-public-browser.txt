@@ -1,0 +1,39 @@
+{
+  "passed": true,
+  "isolation": [
+    "/miniapp:200",
+    "/api/v1/miniapp/bootstrap:401",
+    "/api/v1/miniapp/drafts:401",
+    "/api/v1/accounts:404",
+    "/api/v1/telegram/status:404",
+    "/api/v1/seed/dev-data:404",
+    "/api/v1/ai/parse:404",
+    "/docs:404",
+    "/openapi.json:404",
+    "/.env:404",
+    "/_next/image?url=http://backend:8000/api/v1/accounts&w=640&q=75:404",
+    "/miniapp-assets/golos-1.ttf:200"
+  ],
+  "layouts": [
+    "overview-320",
+    "overview-390",
+    "overview-768",
+    "analytics",
+    "keyboard",
+    "draft",
+    "dark-entry"
+  ],
+  "flows": [
+    "edit",
+    "confirm-error-visible",
+    "lost-response-recovery",
+    "reopen-recovery",
+    "context-followup",
+    "exact-table",
+    "history-filter-change",
+    "voice-recording",
+    "voice-denied-fallback",
+    "empty-account"
+  ],
+  "pageErrors": []
+}

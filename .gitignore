@@ -1,10 +1,13 @@
 .env
+.env.*
+!.env.example
 __pycache__/
 *.py[cod]
 .venv/
 *.egg-info/
 .mypy_cache/
 .ruff_cache/
+.pytest_cache/
 
 node_modules/
 .next/
@@ -13,3 +16,20 @@ out/
 
 *.log
 .DS_Store
+
+.qa/
+backend/tests/fixtures/smoke.*
+
+backend/.local-ca/
+.miniapp-runtime.json
+
+# Local runtime output can contain financial data and temporary access URLs.
+logs/*
+!logs/miniapp-review.md
+!logs/pytest-miniapp.txt
+!logs/frontend-build-miniapp-final.txt
+!logs/genbi-live-repeat.txt
+!logs/genbi-repeat-regression-after.txt
+!logs/miniapp-browser.txt
+!logs/miniapp-public-browser.txt
+!logs/live-miniapp.txt

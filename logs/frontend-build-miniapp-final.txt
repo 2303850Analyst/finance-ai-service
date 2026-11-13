@@ -1,0 +1,47 @@
+ Container finance-ai-service-frontend-run-1c58883971cd Creating
+ Container finance-ai-service-frontend-run-1c58883971cd Created
+
+> finance-ai-frontend@0.1.0 build
+> next build
+
+Attention: Next.js now collects completely anonymous telemetry regarding usage.
+This information is used to shape Next.js' roadmap and prioritize features.
+You can learn more, including how to opt-out if you'd not like to participate in this anonymous program, by visiting the following URL:
+https://nextjs.org/telemetry
+
+  ▲ Next.js 14.2.35
+
+   Creating an optimized production build ...
+Browserslist: browsers data (caniuse-lite) is 6 months old. Please run:
+  npx update-browserslist-db@latest
+  Why you should do it regularly: https://github.com/browserslist/update-db#readme
+Browserslist: caniuse-lite is outdated. Please run:
+  npx update-browserslist-db@latest
+  Why you should do it regularly: https://github.com/browserslist/update-db#readme
+ ✓ Compiled successfully
+   Linting and checking validity of types ...
+   Collecting page data ...
+   Generating static pages (0/10) ...
+   Generating static pages (2/10)
+   Generating static pages (4/10)
+   Generating static pages (7/10)
+ ✓ Generating static pages (10/10)
+   Finalizing page optimization ...
+   Collecting build traces ...
+
+Route (app)                              Size     First Load JS
+┌ ○ /                                    11.2 kB         103 kB
+├ ○ /_not-found                          876 B          88.5 kB
+├ ○ /accounts                            5.36 kB          93 kB
+├ ○ /analytics                           103 kB          190 kB
+├ ○ /assets                              9.89 kB        97.5 kB
+├ ○ /miniapp                             14.8 kB         102 kB
+├ ○ /operations                          8.85 kB         100 kB
+└ ○ /telegram                            2.63 kB        90.3 kB
++ First Load JS shared by all            87.6 kB
+  ├ chunks/117-86aae2d91da6c909.js       31.9 kB
+  ├ chunks/fd9d1056-ebebe634cac0ba2a.js  53.6 kB
+  └ other shared chunks (total)          2.11 kB
+
+
+○  (Static)  prerendered as static content

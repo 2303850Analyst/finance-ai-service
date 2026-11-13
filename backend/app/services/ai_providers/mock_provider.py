@@ -112,7 +112,7 @@ def _find_asset_ticker(text: str) -> str | None:
 
 
 class MockProvider:
-    def parse_operation(self, text: str) -> RawProposal:
+    async def parse_operation(self, text: str) -> RawProposal:
         if _NOT_OP_RE.match(text):
             return RawProposal(
                 is_operation=False,
