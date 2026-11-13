@@ -1,0 +1,6 @@
+{
+  "name": "finai-ui-checks",
+  "private": true,
+  "scripts": { "test": "node genbi-result-check.cjs" },
+  "devDependencies": { "playwright": "1.65.0" }
+}

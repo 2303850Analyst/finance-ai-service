@@ -33,3 +33,4 @@ logs/*
 !logs/miniapp-browser.txt
 !logs/miniapp-public-browser.txt
 !logs/live-miniapp.txt
+!logs/genbi-result-after.txt
